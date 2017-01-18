@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+
+use App\Todo;
+use App\Http\Requests\StoreTodo;
+use App\Http\Requests\UpdateTodo;
 
 class TodoController extends Controller
 {
@@ -13,7 +18,7 @@ class TodoController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json(Todo::all());
     }
 
     /**
@@ -22,9 +27,9 @@ class TodoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreTodo $request)
     {
-        //
+        return response()->json(Todo::create($request->all()));
     }
 
     /**
@@ -35,7 +40,7 @@ class TodoController extends Controller
      */
     public function show($id)
     {
-        //
+        return response()->json(Todo::find($id));
     }
 
     /**
@@ -45,9 +50,20 @@ class TodoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateTodo $request, $id)
     {
-        //
+        try {
+            $todo = Todo::findOrFail($id);
+
+            $todo->todo = $request->get('todo');
+            $todo->status = $request->get('status');
+            $todo->save();
+
+            return response()->json($todo);
+        } catch (ModelNotFoundException $e) {
+            return response()->json($e->getMessage(), 404);
+        }
+
     }
 
     /**
@@ -58,6 +74,7 @@ class TodoController extends Controller
      */
     public function destroy($id)
     {
-        //
+        // @todo check what this returns..
+        return response()->json(Todo::destroy($id));
     }
 }
