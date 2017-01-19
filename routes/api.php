@@ -17,4 +17,6 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:api');
 
-Route::resource('/todos', TodoController::class);
+Route::resource('/todos', TodoController::class, ['except' => [
+    'create', 'edit'
+]]);
