@@ -1,0 +1,9 @@
+<main>
+  <h1>
+    {{title}}
+  </h1>
+  <ul>
+    <app-todo-item *ngFor="let todo of todos" [todo]="todo"></app-todo-item>
+    <app-new-todo-item (create)="onCreateTodo($event)"></app-new-todo-item>
+  </ul>
+</main>

@@ -1,0 +1,5 @@
+<li (click)="onClick()">
+    <input [(ngModel)]="todo.status" (click)="onCheck($event)" type="checkbox" />
+    <span [hidden]="inputMode">{{todo.todo}}</span>
+    <span [hidden]="!inputMode"><input [(ngModel)]="todo.todo" (click)="onClickInput($event)" (change)="onChange($event)" placeholder="new todo" /></span>
+</li>
