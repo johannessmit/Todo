@@ -1,0 +1,21 @@
+main,
+section,
+ul,
+li {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+main {
+    width: 100%;
+    text-align: center;
+}
+
+main ul {
+    display: inline-block;
+    list-style: none;
+    width: 250px;
+    border-radius: 3px;
+    box-shadow:1px 0px 4px 2px rgba(0,0,0,0.4);
+}
