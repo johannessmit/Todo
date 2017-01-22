@@ -84,14 +84,8 @@ var AppComponent = (function () {
         var _this = this;
         this.todoService.getTodos().then(function (todos) { return _this.todos = todos; });
     };
-    AppComponent.prototype.onClick = function (todo) {
-        console.log('OnClickTodo', todo);
-    };
-    AppComponent.prototype.onCheck = function (todo) {
-        console.log('OnCheckTodo', todo);
-    };
-    AppComponent.prototype.onUpdate = function (todo) {
-        console.log('OnUpdate', todo);
+    AppComponent.prototype.onCreateTodo = function (todo) {
+        this.getTodos();
     };
     AppComponent = __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["U" /* Component */])({
@@ -184,22 +178,28 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var NewTodoItemComponent = (function () {
     function NewTodoItemComponent(todoService) {
         this.todoService = todoService;
+        this.create = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["G" /* EventEmitter */]();
     }
     NewTodoItemComponent.prototype.onChange = function (event) {
+        var _this = this;
         var input = event.target;
         var todoValue = input.value;
-        this.todoService.addTodo({ todo: todoValue });
+        todoValue && this.todoService.addTodo({ todo: todoValue }).then(function (todo) { return _this.create.emit(todo); });
     };
+    __decorate([
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["T" /* Output */])(), 
+        __metadata('design:type', (typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["G" /* EventEmitter */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_0__angular_core__["G" /* EventEmitter */]) === 'function' && _a) || Object)
+    ], NewTodoItemComponent.prototype, "create", void 0);
     NewTodoItemComponent = __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["U" /* Component */])({
             selector: 'app-new-todo-item',
             template: __webpack_require__(639),
             styles: [__webpack_require__(635)]
         }), 
-        __metadata('design:paramtypes', [(typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__todo_service__["a" /* TodoService */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_1__todo_service__["a" /* TodoService */]) === 'function' && _a) || Object])
+        __metadata('design:paramtypes', [(typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__todo_service__["a" /* TodoService */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_1__todo_service__["a" /* TodoService */]) === 'function' && _b) || Object])
     ], NewTodoItemComponent);
     return NewTodoItemComponent;
-    var _a;
+    var _a, _b;
 }());
 //# sourceMappingURL=/Users/johannessmit/Development/beepRoger/todo/resources/assets/todoFrontend/src/new-todo-item.component.js.map
 
@@ -237,8 +237,9 @@ var TodoItemComponent = (function () {
     TodoItemComponent.prototype.onClickInput = function (event) {
         event.stopPropagation();
     };
-    TodoItemComponent.prototype.onCheck = function () {
+    TodoItemComponent.prototype.onCheck = function (event) {
         var _this = this;
+        event.stopPropagation();
         this.todo.status = this.todo.status ? 0 : 1;
         this.todoService.updateTodo(this.todo).then(function (todo) { _this.todo = todo; });
     };
@@ -407,28 +408,28 @@ var Todo = (function () {
 /***/ 634:
 /***/ (function(module, exports) {
 
-module.exports = "main,\nsection {\n    box-sizing: border-box;\n}\n\nmain {\n    width: 100%;\n    text-align: center;\n}\n\nmain ul {\n    display: inline-block;\n    list-style: none;\n    width: 250px;\n}"
+module.exports = "main,\nsection,\nul,\nli {\n    box-sizing: border-box;\n    margin: 0;\n    padding: 0;\n}\n\nmain {\n    width: 100%;\n    text-align: center;\n}\n\nmain ul {\n    display: inline-block;\n    list-style: none;\n    width: 250px;\n    border-radius: 3px;\n    box-shadow:1px 0px 4px 2px rgba(0,0,0,0.4);\n}"
 
 /***/ }),
 
 /***/ 635:
 /***/ (function(module, exports) {
 
-module.exports = ""
+module.exports = "li {\n    margin: 10px;\n}"
 
 /***/ }),
 
 /***/ 636:
 /***/ (function(module, exports) {
 
-module.exports = "li {\n    line-height: 30px;\n    height: 30px;\n    background: rgb(100, 100, 100);\n    margin: 5px;\n}"
+module.exports = "li {\n    width: 100%;\n    color: rgb(50, 50, 50);\n    line-height: 30px;\n    height: 30px;\n    background: rgb(230, 230, 230);\n}\n\nli:first-child {\n    border-radius: 3px 3px 0px 0px;\n}\n\nli input[type=checkbox] {\n    margin-left: 10px;\n    margin-top: 8px;\n    float: left;\n}"
 
 /***/ }),
 
 /***/ 638:
 /***/ (function(module, exports) {
 
-module.exports = "<main>\n  <h1>\n    {{title}}\n  </h1>\n  <ul>\n    <app-todo-item *ngFor=\"let todo of todos\" [todo]=\"todo\"></app-todo-item>\n    <app-new-todo-item></app-new-todo-item>\n  </ul>\n</main>"
+module.exports = "<main>\n  <h1>\n    {{title}}\n  </h1>\n  <ul>\n    <app-todo-item *ngFor=\"let todo of todos\" [todo]=\"todo\"></app-todo-item>\n    <app-new-todo-item (create)=\"onCreateTodo($event)\"></app-new-todo-item>\n  </ul>\n</main>"
 
 /***/ }),
 
@@ -442,7 +443,7 @@ module.exports = "<li>\n  <input type=\"text\" placeholder=\"new todo\" (change)
 /***/ 640:
 /***/ (function(module, exports) {
 
-module.exports = "<li (click)=\"onClick()\">\n    <input [(ngModel)]=\"todo.status\" (click)=\"onCheck()\" type=\"checkbox\" />\n    <span *ngIf=\"!inputMode\">{{todo.todo}}</span>\n    <span *ngIf=\"inputMode\"><input [(ngModel)]=\"todo.todo\" (click)=\"onClickInput($event)\" (change)=\"onChange($event)\" placeholder=\"new todo\" /></span>\n</li>"
+module.exports = "<li (click)=\"onClick()\">\n    <input [(ngModel)]=\"todo.status\" (click)=\"onCheck($event)\" type=\"checkbox\" />\n    <span [hidden]=\"inputMode\">{{todo.todo}}</span>\n    <span [hidden]=\"!inputMode\"><input [(ngModel)]=\"todo.todo\" (click)=\"onClickInput($event)\" (change)=\"onChange($event)\" placeholder=\"new todo\" /></span>\n</li>"
 
 /***/ }),
 
