@@ -15,3 +15,9 @@ li input[type=checkbox] {
     margin-top: 8px;
     float: left;
 }
+
+li button {
+    float: right;
+    margin-right: 10px;
+    margin-top: 6px;
+}

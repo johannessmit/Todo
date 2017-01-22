@@ -41,8 +41,8 @@ export class TodoService {
     });
   }
 
-  deleteTodo(data) : Promise<number> {
-    const request = axios.delete(`${API_URL}todos/${data.id}`);
+  deleteTodo(id) : Promise<number> {
+    const request = axios.delete(`${API_URL}todos/${id}`);
 
     return new Promise((resolve, reject) => {
       request.then(data => resolve(data.data)).catch(error => reject(error));

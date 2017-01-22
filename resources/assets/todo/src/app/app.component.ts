@@ -22,7 +22,11 @@ export class AppComponent implements OnInit {
     this.todoService.getTodos().then(todos => this.todos = todos);
   }
 
-  onCreateTodo(todo): void {
+  onCreateTodo(): void {
+    this.getTodos();
+  }
+
+  onDeleteTodo(): void {
     this.getTodos();
   }
 }

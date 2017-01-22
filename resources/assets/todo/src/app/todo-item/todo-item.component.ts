@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Todo } from '../todo';
 import { TodoService } from '../todo.service';
 
@@ -11,6 +11,8 @@ export class TodoItemComponent {
   @Input()
   todo: Todo = null;
   inputMode: boolean = false;
+
+  @Output() delete: EventEmitter<number> = new EventEmitter();
 
   constructor(private todoService: TodoService) { }
 
@@ -37,5 +39,11 @@ export class TodoItemComponent {
     
     this.inputMode = !this.inputMode;
     this.todoService.updateTodo(newData).then(todo => { this.todo = todo});
+  }
+
+  onClickDelete(event) {
+    event.stopPropagation();
+
+    this.todoService.deleteTodo(this.todo.id).then(todo => { this.todo = null });
   }
 }
