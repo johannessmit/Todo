@@ -16,8 +16,17 @@ class TodoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->has('filter')) {
+            switch($request->get('filter', '')) {
+                case 'withTrashed':
+                    return response()->json(Todo::withTrashed()->get());
+                default:
+                    return response()->json(Todo::all());
+            }
+        }
+
         return response()->json(Todo::all());
     }
 
@@ -31,7 +40,7 @@ class TodoController extends Controller
     {
         $todo = new Todo($request->all());
 
-        $todo->status = 0;
+        $todo->status = Todo::UNDONE;
 
         $todo->save();
 
@@ -81,6 +90,14 @@ class TodoController extends Controller
     public function destroy($id)
     {
         // @todo check what this returns..
-        return response()->json(Todo::destroy($id));
+        $todo = Todo::withTrashed()->find($id);
+
+        $todo->status = Todo::DELETED;
+        $todo->save();
+
+        $todo->delete();
+
+
+        return response()->json($todo);
     }
 }

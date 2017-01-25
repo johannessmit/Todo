@@ -10,8 +10,14 @@ const API_URL = environment.apiUrl;
 export class TodoService {
   constructor(private http: Http) {}
 
-  getTodos() : Observable<Todo[]> {
-    return this.http.get(`${API_URL}todos`)
+  getTodos(filter : string = null) : Observable<Todo[]> {
+    let url = `${API_URL}todos`
+
+    if (filter) {
+      url += `?filter=${filter}`
+    }
+
+    return this.http.get(url)
       .map(this.extractData)
       .catch(this.handleError)
   }
@@ -34,27 +40,27 @@ export class TodoService {
       .catch(this.handleError)
   }
 
-  deleteTodo(id : number) : Observable<Todo> {
+  deleteTodo(id : number) : Observable<number> {
     return this.http.delete(`${API_URL}todos/${id}`)
       .map(this.extractData)
       .catch(this.handleError)
   }
 
   private extractData(response: Response) {
-    let body = response.json();
-    return body;
+    let body = response.json()
+    return body
   }
 
   private handleError(error: Response | any) {
-    let errorMessage : string;
+    let errorMessage : string
     if (error instanceof Response) {
-      const body = error.json() || '';
-      const err = body.error || JSON.stringify(body);
-      errorMessage = `${error.status} - ${error.statusText || ''} ${err}`;
+      const body = error.json() || ''
+      const err = body.error || JSON.stringify(body)
+      errorMessage = `${error.status} - ${error.statusText || ''} ${err}`
     } else {
-      errorMessage = error.message ? error.message : error.toString();
+      errorMessage = error.message ? error.message : error.toString()
     }
-    console.error(errorMessage);
-    return Observable.throw(errorMessage);
+    console.error(errorMessage)
+    return Observable.throw(errorMessage)
   }
 }

@@ -9,8 +9,9 @@ class Todo extends Model
 {
     use SoftDeletes;
 
-    const UNDONE = '0';
-    const DONE = '1';
+    const UNDONE = 0;
+    const DONE = 1;
+    const DELETED = 2;
 
     protected $fillable = [
         'todo',

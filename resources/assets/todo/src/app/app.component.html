@@ -3,7 +3,13 @@
     {{title}}
   </h1>
   <ul>
-    <app-todo-item *ngFor="let todo of todos" [todo]="todo" (delete)="onDeleteTodo()"></app-todo-item>
-    <app-new-todo-item (create)="onCreateTodo()"></app-new-todo-item>
+    <app-todo-list-menu (filter)="onFilterTodo($event)"></app-todo-list-menu>
+    <app-todo-item *ngFor="let todo of todos" 
+      [todo]="todo" 
+      (delete)="onDeleteTodo($event)" 
+      (check)="onUpdateTodo($event)"
+      (update)="onUpdateTodo($event)">
+    </app-todo-item>
+    <app-new-todo-item (create)="onCreateTodo($event)"></app-new-todo-item>
   </ul>
 </main>
