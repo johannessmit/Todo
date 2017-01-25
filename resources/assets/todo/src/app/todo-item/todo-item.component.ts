@@ -26,10 +26,12 @@ export class TodoItemComponent {
 
   onCheck(event) {
     event.stopPropagation();
-    
-    this.todo.status = this.todo.status ? 0 : 1;
 
-    this.todoService.updateTodo(this.todo).then(todo => { this.todo = todo });
+    const updatedTodo = Object.assign(this.todo, {
+      status: !this.todo.status
+    });
+
+    this.todoService.updateTodo(updatedTodo).subscribe(todo => { this.todo = todo });
   }
 
   onChange(event) {
@@ -38,12 +40,12 @@ export class TodoItemComponent {
     const newData = Object.assign(this.todo, {todo: newValue});
     
     this.inputMode = !this.inputMode;
-    this.todoService.updateTodo(newData).then(todo => { this.todo = todo});
+    this.todoService.updateTodo(newData).subscribe(todo => { this.todo = todo});
   }
 
   onClickDelete(event) {
     event.stopPropagation();
 
-    this.todoService.deleteTodo(this.todo.id).then(todo => { this.todo = null });
+    this.todoService.deleteTodo(this.todo.id).subscribe(todo => { this.todo = null });
   }
 }

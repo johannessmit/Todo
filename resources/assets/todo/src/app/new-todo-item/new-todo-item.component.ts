@@ -16,6 +16,6 @@ export class NewTodoItemComponent {
     const input = event.target;
     const todoValue = input.value;
 
-    todoValue && this.todoService.addTodo({todo: todoValue}).then(todo => this.create.emit(todo));
+    todoValue && this.todoService.addTodo({todo: todoValue}).subscribe(todo => this.create.emit(todo));
   }
 }

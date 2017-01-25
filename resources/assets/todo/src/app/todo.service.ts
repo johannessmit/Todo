@@ -1,53 +1,60 @@
 import { Injectable } from '@angular/core';
+import { Http, Response } from '@angular/http';
+import { Observable } from 'rxjs/Observable';
 import { environment } from '../environments/environment';
-import axios from 'axios';
 import { Todo } from './todo';
 
 const API_URL = environment.apiUrl;
 
 @Injectable()
 export class TodoService {
+  constructor(private http: Http) {}
 
-  constructor() { }
-  getTodos() : Promise<Todo[]> {
-    const request = axios.get(`${API_URL}todos`);
-
-    return new Promise((resolve, reject) => {
-      request.then(data => resolve(data.data)).catch(error => reject(error));
-    });
+  getTodos() : Observable<Todo[]> {
+    return this.http.get(`${API_URL}todos`)
+      .map(this.extractData)
+      .catch(this.handleError)
   }
 
-  getTodo(id) : Promise<Todo> {
-    const request = axios.get(`${API_URL}todos/${id}`);
-    
-    return new Promise((resolve, reject) => {
-      request.then(data => resolve(data.data)).catch(error => reject(error));
-    });
+  getTodo(id : number) : Observable<Todo> {
+    return this.http.get(`${API_URL}todos/${id}`)
+      .map(this.extractData)
+      .catch(this.handleError)
   }
 
-  updateTodo(data) : Promise<Todo> {
-    const request = axios.put(`${API_URL}todos/${data.id}`, data);
-
-    return new Promise((resolve, reject) => {
-      request.then(data => resolve(data.data)).catch(error => reject(error));
-    });
+  updateTodo(data : Todo) : Observable<Todo> {
+    return this.http.put(`${API_URL}todos/${data.id}`, data)
+      .map(this.extractData)
+      .catch(this.handleError)
   }
 
-  addTodo(data) : Promise<Todo> {
-    const request = axios.post(`${API_URL}todos`, data);
-
-    return new Promise((resolve, reject) => {
-      request.then(data => resolve(data.data)).catch(error => reject(error));
-    });
+  addTodo(data : Object) : Observable<Todo> {
+    return this.http.post(`${API_URL}todos`, data)
+      .map(this.extractData)
+      .catch(this.handleError)
   }
 
-  deleteTodo(id) : Promise<number> {
-    const request = axios.delete(`${API_URL}todos/${id}`);
-
-    return new Promise((resolve, reject) => {
-      request.then(data => resolve(data.data)).catch(error => reject(error));
-    });
+  deleteTodo(id : number) : Observable<Todo> {
+    return this.http.delete(`${API_URL}todos/${id}`)
+      .map(this.extractData)
+      .catch(this.handleError)
   }
 
+  private extractData(response: Response) {
+    let body = response.json();
+    return body;
+  }
 
+  private handleError(error: Response | any) {
+    let errorMessage : string;
+    if (error instanceof Response) {
+      const body = error.json() || '';
+      const err = body.error || JSON.stringify(body);
+      errorMessage = `${error.status} - ${error.statusText || ''} ${err}`;
+    } else {
+      errorMessage = error.message ? error.message : error.toString();
+    }
+    console.error(errorMessage);
+    return Observable.throw(errorMessage);
+  }
 }

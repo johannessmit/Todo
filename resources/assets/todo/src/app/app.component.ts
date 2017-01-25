@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Todo } from './todo';
 import { TodoService } from './todo.service';
+import './rxjs-operators';
 
 @Component({
   selector: 'app-root',
@@ -19,7 +20,7 @@ export class AppComponent implements OnInit {
   }
 
   getTodos(): void {
-    this.todoService.getTodos().then(todos => this.todos = todos);
+    this.todoService.getTodos().subscribe(todos => this.todos = todos);
   }
 
   onCreateTodo(): void {

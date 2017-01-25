@@ -5,9 +5,10 @@ webpackJsonp([0,3],{
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__environments_environment__ = __webpack_require__(301);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_axios__ = __webpack_require__(464);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_axios__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_http__ = __webpack_require__(434);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__ = __webpack_require__(76);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__environments_environment__ = __webpack_require__(301);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return TodoService; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -21,45 +22,60 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-var API_URL = __WEBPACK_IMPORTED_MODULE_1__environments_environment__["a" /* environment */].apiUrl;
+
+var API_URL = __WEBPACK_IMPORTED_MODULE_3__environments_environment__["a" /* environment */].apiUrl;
 var TodoService = (function () {
-    function TodoService() {
+    function TodoService(http) {
+        this.http = http;
     }
     TodoService.prototype.getTodos = function () {
-        var request = __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get(API_URL + "todos");
-        return new Promise(function (resolve, reject) {
-            request.then(function (data) { return resolve(data.data); }).catch(function (error) { return reject(error); });
-        });
+        return this.http.get(API_URL + "todos")
+            .map(this.extractData)
+            .catch(this.handleError);
     };
     TodoService.prototype.getTodo = function (id) {
-        var request = __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get(API_URL + "todos/" + id);
-        return new Promise(function (resolve, reject) {
-            request.then(function (data) { return resolve(data.data); }).catch(function (error) { return reject(error); });
-        });
+        return this.http.get(API_URL + "todos/" + id)
+            .map(this.extractData)
+            .catch(this.handleError);
     };
     TodoService.prototype.updateTodo = function (data) {
-        var request = __WEBPACK_IMPORTED_MODULE_2_axios___default.a.put(API_URL + "todos/" + data.id, data);
-        return new Promise(function (resolve, reject) {
-            request.then(function (data) { return resolve(data.data); }).catch(function (error) { return reject(error); });
-        });
+        return this.http.put(API_URL + "todos/" + data.id, data)
+            .map(this.extractData)
+            .catch(this.handleError);
     };
     TodoService.prototype.addTodo = function (data) {
-        var request = __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post(API_URL + "todos", data);
-        return new Promise(function (resolve, reject) {
-            request.then(function (data) { return resolve(data.data); }).catch(function (error) { return reject(error); });
-        });
+        return this.http.post(API_URL + "todos", data)
+            .map(this.extractData)
+            .catch(this.handleError);
     };
     TodoService.prototype.deleteTodo = function (id) {
-        var request = __WEBPACK_IMPORTED_MODULE_2_axios___default.a.delete(API_URL + "todos/" + id);
-        return new Promise(function (resolve, reject) {
-            request.then(function (data) { return resolve(data.data); }).catch(function (error) { return reject(error); });
-        });
+        return this.http.delete(API_URL + "todos/" + id)
+            .map(this.extractData)
+            .catch(this.handleError);
+    };
+    TodoService.prototype.extractData = function (response) {
+        var body = response.json();
+        return body;
+    };
+    TodoService.prototype.handleError = function (error) {
+        var errorMessage;
+        if (error instanceof __WEBPACK_IMPORTED_MODULE_1__angular_http__["b" /* Response */]) {
+            var body = error.json() || '';
+            var err = body.error || JSON.stringify(body);
+            errorMessage = error.status + " - " + (error.statusText || '') + " " + err;
+        }
+        else {
+            errorMessage = error.message ? error.message : error.toString();
+        }
+        console.error(errorMessage);
+        return __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__["Observable"].throw(errorMessage);
     };
     TodoService = __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["d" /* Injectable */])(), 
-        __metadata('design:paramtypes', [])
+        __metadata('design:paramtypes', [(typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* Http */] !== 'undefined' && __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* Http */]) === 'function' && _a) || Object])
     ], TodoService);
     return TodoService;
+    var _a;
 }());
 //# sourceMappingURL=/Users/johannessmit/Development/beepRoger/todo/resources/assets/todo/src/todo.service.js.map
 
@@ -125,6 +141,7 @@ __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__angular_platform_browser_dyna
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__todo_service__ = __webpack_require__(199);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__rxjs_operators__ = __webpack_require__(657);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -137,6 +154,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 
 
+
 var AppComponent = (function () {
     function AppComponent(todoService) {
         this.todoService = todoService;
@@ -147,7 +165,7 @@ var AppComponent = (function () {
     };
     AppComponent.prototype.getTodos = function () {
         var _this = this;
-        this.todoService.getTodos().then(function (todos) { return _this.todos = todos; });
+        this.todoService.getTodos().subscribe(function (todos) { return _this.todos = todos; });
     };
     AppComponent.prototype.onCreateTodo = function () {
         this.getTodos();
@@ -252,7 +270,7 @@ var NewTodoItemComponent = (function () {
         var _this = this;
         var input = event.target;
         var todoValue = input.value;
-        todoValue && this.todoService.addTodo({ todo: todoValue }).then(function (todo) { return _this.create.emit(todo); });
+        todoValue && this.todoService.addTodo({ todo: todoValue }).subscribe(function (todo) { return _this.create.emit(todo); });
     };
     __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["T" /* Output */])(), 
@@ -309,8 +327,10 @@ var TodoItemComponent = (function () {
     TodoItemComponent.prototype.onCheck = function (event) {
         var _this = this;
         event.stopPropagation();
-        this.todo.status = this.todo.status ? 0 : 1;
-        this.todoService.updateTodo(this.todo).then(function (todo) { _this.todo = todo; });
+        var updatedTodo = Object.assign(this.todo, {
+            status: !this.todo.status
+        });
+        this.todoService.updateTodo(updatedTodo).subscribe(function (todo) { _this.todo = todo; });
     };
     TodoItemComponent.prototype.onChange = function (event) {
         var _this = this;
@@ -318,12 +338,12 @@ var TodoItemComponent = (function () {
         var newValue = input.value;
         var newData = Object.assign(this.todo, { todo: newValue });
         this.inputMode = !this.inputMode;
-        this.todoService.updateTodo(newData).then(function (todo) { _this.todo = todo; });
+        this.todoService.updateTodo(newData).subscribe(function (todo) { _this.todo = todo; });
     };
     TodoItemComponent.prototype.onClickDelete = function (event) {
         var _this = this;
         event.stopPropagation();
-        this.todoService.deleteTodo(this.todo.id).then(function (todo) { _this.todo = null; });
+        this.todoService.deleteTodo(this.todo.id).subscribe(function (todo) { _this.todo = null; });
     };
     __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["w" /* Input */])(), 
@@ -465,6 +485,36 @@ module.exports = "<li *ngIf=\"todo\" (click)=\"onClick()\">\n    <input [(ngMode
 
 module.exports = __webpack_require__(349);
 
+
+/***/ }),
+
+/***/ 657:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_rxjs_add_observable_throw__ = __webpack_require__(660);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_rxjs_add_observable_throw___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_rxjs_add_observable_throw__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_add_operator_catch__ = __webpack_require__(661);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_add_operator_catch___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_rxjs_add_operator_catch__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_debounceTime__ = __webpack_require__(662);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_debounceTime___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_debounceTime__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_distinctUntilChanged__ = __webpack_require__(663);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_distinctUntilChanged___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_distinctUntilChanged__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rxjs_add_operator_map__ = __webpack_require__(664);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rxjs_add_operator_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_rxjs_add_operator_map__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_rxjs_add_operator_switchMap__ = __webpack_require__(665);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_rxjs_add_operator_switchMap___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_rxjs_add_operator_switchMap__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_rxjs_add_operator_toPromise__ = __webpack_require__(666);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_rxjs_add_operator_toPromise___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_rxjs_add_operator_toPromise__);
+// import 'rxjs/Rx'; // adds ALL RxJS statics & operators to Observable
+
+
+
+
+
+
+
+//# sourceMappingURL=/Users/johannessmit/Development/beepRoger/todo/resources/assets/todo/src/rxjs-operators.js.map
 
 /***/ })
 
